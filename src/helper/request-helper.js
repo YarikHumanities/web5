@@ -2,7 +2,9 @@ import { get } from "svelte/store";
 import { token } from "../store";
 
 class RequestHelper {
-  API_url = "https://our-table.herokuapp.com/v1/graphql";
+  constructor() {
+    this.API_url = "https://our-table.herokuapp.com/v1/graphql";
+  }
   async fetchGraphQL(operationsDoc, operationName, variables) {
     const result = await fetch(this.API_url, {
       method: "POST",
