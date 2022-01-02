@@ -1,9 +1,10 @@
 import { get } from "svelte/store";
 import { token } from "../store";
+import { isDebugMode } from "../cosntants";
 
 class RequestHelper {
   constructor() {
-    this.API_url = "https://our-table.herokuapp.com/v1/graphql";
+    this.API_url = process.env.HASURA_API_PROJECT_URL;
   }
   async fetchGraphQL(operationsDoc, operationName, variables) {
     const result = await fetch(this.API_url, {
@@ -29,12 +30,18 @@ class RequestHelper {
     const { errors, data } = await this.fetchMyQuery(operationsDoc);
 
     if (errors) {
-      // handle those errors like a pro
-      console.error(errors);
+      if (isDebugMode) {
+        throw new Error(`Query was not successful: ${errors}`);
+      } else {
+        console.error(`Query was not successful: ${errors}`);
+        return null;
+      }
     }
 
-    // do something great with this precious data
-    console.log(data);
+    if (isDebugMode) {
+      console.log(data);
+    }
+
     return data;
   }
 
@@ -46,12 +53,18 @@ class RequestHelper {
     const { errors, data } = await this.executeMyMutation(operationsDoc);
 
     if (errors) {
-      // handle those errors like a pro
-      console.error(errors);
+      if (isDebugMode) {
+        throw new Error(`Query was not successful: ${errors}`);
+      } else {
+        console.error(`Query was not successful: ${errors}`);
+        return null;
+      }
     }
 
-    // do something great with this precious data
-    console.log(data);
+    if (isDebugMode) {
+      console.log(data);
+    }
+    
     return data;
   }
 }

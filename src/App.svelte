@@ -16,10 +16,13 @@
 
   token.subscribe(async (value) => {
     if (value) {
-      const result = await http.startFetchMyQuery(
+      const response = await http.startFetchMyQuery(
         OperationsDocHelper.QUERY_get_all(),
       );
-      cities.set(result.laba3_cities);
+      
+      if (response !== null) {
+        cities.set(response.laba3_cities);
+      }
     }
   });
   let auth0Client;
@@ -42,18 +45,6 @@
     auth.logout(auth0Client);
   }
 
-  //const renderTable = () => {
-  //const table = document.querySelector('table')
-
-  //cities.forEach(city => {
-  //table.innerHTML+=`<tr>
-  //<td>${city.city_name}</td>
-  //<td>${city.country_name}</td>
-  //<td>${city.population}</td>
-  //</tr>`;
-  //})
-
-  //}
 
   const convert = (string) => {
     return isNaN(+string) ? 0 : +string;
@@ -63,38 +54,38 @@
     const naming = prompt("City: ") ?? "";
     const country = prompt("Country: ") ?? "";
     const people = convert(prompt("Population: ") ?? "");
-    //console.log(naming);
+
     if (!naming || !country || !people) return;
-    const { insert_laba3_cities } = await http.startExecuteMyMutation(
+    const response = await http.startExecuteMyMutation(
       OperationsDocHelper.MUTATION_insert(naming, country, people),
     );
-    const { returning } = insert_laba3_cities;
-    cities.update((n) => [...n, returning[0]]);
-    //cities.push(returning[0]);
-    //renderTable();
-    //console.log(result);
+
+    if (response !== null) {
+      const returning = response.insert_laba3_cities.returning;
+      cities.update((n) => [...n, returning[0]]); 
+    }
   };
 
   const deleteCityOnCounrty = async () => {
     const country = prompt("Country: ") ?? "";
-    /*const {delete_laba3_cities} = */ await http.startExecuteMyMutation(
+    const response = await http.startExecuteMyMutation(
       OperationsDocHelper.MUTATION_deleteOnCountry(country),
     );
-    cities.update((n) => n.filter((item) => item.country_name !== country));
-    //const {returning} = delete_laba3_cities;
-    //cities.push(returning[0]);
-    //renderTable();
+
+    if (response !== null) {
+      cities.update((n) => n.filter((item) => item.country_name !== country));
+    }
   };
 
   const deleteCity = async () => {
     const city = prompt("City: ") ?? "";
-    /*const {delete_laba3_cities}=*/ await http.startExecuteMyMutation(
+    const response = await http.startExecuteMyMutation(
       OperationsDocHelper.MUTATION_deleteOnCity(city),
     );
-    cities.update((n) => n.filter((item) => item.city_name !== city));
 
-    // const {returning} = delete_laba3_cities;
-    //renderTable();
+    if (response !== null) {
+      cities.update((n) => n.filter((item) => item.city_name !== city));
+    }
   };
 </script>
 
@@ -102,7 +93,6 @@
   {#if !$offline}
     {#if $isAuthenticated}
       <body>
-        <!--{JSON.stringify($cities)} -->
         <div class="buttns">
           <button class="btn" on:click={logout}>Log out</button>
           <button class="btn" on:click={addCity}>Add</button>
@@ -134,17 +124,6 @@
     <h1>You are offline</h1>
   {/if}
 
-  <!-- <button on:click={addCity}>Add</button>
-	<button on:click={deleteCity}>Delete city</button>
-	<button on:click={deleteCityOnCounrty}>Delete country</button>
-	<table border="1">
-		<caption>Cities</caption>
-		<tr>
-			<th>City</th>
-			<th>Country</th>
-			<th>Population</th>
-		</tr>
-	</table> -->
 </main>
 
 <style>
