@@ -25,22 +25,9 @@ export class OperationsDocHelper {
       }`;
   }
 
-  static MUTATION_deleteOnCountry(country) {
+  static MUTATION_deleteOnID(id) {
     return `mutation MyMutation {
-        delete_laba3_cities(where: {country_name: {_eq: "${country}"}}) {
-          returning {
-            id
-            city_name
-            country_name
-            population
-          }
-        }
-      }`;
-  }
-
-  static MUTATION_deleteOnCity(city) {
-    return `mutation MyMutation {
-        delete_laba3_cities(where: {city_name: {_eq:  "${city}"}}) {
+        delete_laba3_cities(where: {id: {_eq:  "${id}"}}) {
           returning {
             id
             city_name
